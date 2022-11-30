@@ -48,7 +48,7 @@ def check_tokens():
     filtered = (list(filter(None, tokens)))
     if len(filtered) != len(tokens):
         logging.critical('Отсутствует обязательная переменная окружения.'
-            'Программа принудительно остановлена.')
+                         'Программа принудительно остановлена.')
         return False
     else:
         return True
@@ -119,7 +119,7 @@ def main():
                 message = parse_status(homeworks[0])
                 send_message(bot, message)
             else:
-                logging.debug (f'отсутствие в ответе новых статусов')
+                logging.debug('отсутствие в ответе новых статусов')
         except Exception as error:
             last_error = ''
             message_error = (f'Сбой в работе программы: {error}')
