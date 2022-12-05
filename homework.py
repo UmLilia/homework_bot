@@ -7,7 +7,9 @@ import telegram
 
 from dotenv import load_dotenv
 
-from exceptions import MessageSendError, ApiAnswerError, HTTPStatusError, ResponseWithoutKeyError, HomeWorkStatusError
+from exceptions import MessageSendError, ApiAnswerError
+from exceptions import ResponseWithoutKeyError, HomeWorkStatusError
+from exceptions import HTTPStatusError
 
 from http import HTTPStatus
 
@@ -87,7 +89,7 @@ def parse_status(homework) -> str:
     status = homework.get('status')
     homework_name = homework.get('homework_name')
     if status not in HOMEWORK_VERDICTS:
-        raise HomeWorkStatusError(f'неожиданный статус домашней работы - {status}')
+        raise HomeWorkStatusError(f'неожиданный статус работы - {status}')
     verdict = HOMEWORK_VERDICTS[status]
     return f'Изменился статус проверки работы "{homework_name}". {verdict}'
 
@@ -98,7 +100,7 @@ def main():
     timestamp = int(time.time())
     last_error = ''
     if not check_tokens():
-        logging.critical('Отсутствует обязательная переменная окружения.' 
+        logging.critical('Отсутствует обязательная переменная окружения.'
                          'Программа принудительно остановлена.')
         sys.exit()
     while True:
