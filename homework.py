@@ -7,9 +7,12 @@ import telegram
 
 from dotenv import load_dotenv
 
-from exceptions import MessageSendError, ApiAnswerError
-from exceptions import ResponseWithoutKeyError, HomeWorkStatusError
-from exceptions import HTTPStatusError
+from exceptions import (
+    ApiAnswerError,
+    ResponseWithoutKeyError,
+    HomeWorkStatusError,
+    HTTPStatusError
+)
 
 from http import HTTPStatus
 
@@ -43,7 +46,6 @@ def send_message(bot, message) -> None:
     except Exception as error:
         message_error = (f'Сбой при отправке сообщения - {error}')
         logging.error(message_error)
-        raise MessageSendError(message_error)
     else:
         logging.debug(f'удачная отправка сообщения: {message}')
 
@@ -57,13 +59,9 @@ def get_api_answer(current_timestamp) -> dict:
             params={'from_date': current_timestamp}
         )
     except Exception as error:
-        message_error = (f'Сбой при запросе к эндпоинту - {error}')
-        logging.error(message_error)
-        raise ApiAnswerError(message_error)
+        raise ApiAnswerError(f'Сбой при запросе к эндпоинту - {error}')
     if response.status_code != HTTPStatus.OK:
-        message_error = (f'Недоступность эндпоинта {ENDPOINT}')
-        logging.error(message_error)
-        raise HTTPStatusError(message_error)
+        raise HTTPStatusError(f'Недоступность эндпоинта {ENDPOINT}')
     return response.json()
 
 
@@ -71,12 +69,12 @@ def check_response(response) -> list:
     """Проверяет ответ API на соответствие документации."""
     message_error = 'получен неверный тип данных'
     if not isinstance(response, dict):
-        logging.error(message_error)
         raise TypeError(message_error)
     homeworks = response.get('homeworks')
     if not isinstance(homeworks, list):
-        logging.error(message_error)
         raise TypeError(message_error)
+    if 'current_date' not in response:
+        raise ResponseWithoutKeyError('в ответе API нет ключа current_date')
     return homeworks
 
 
